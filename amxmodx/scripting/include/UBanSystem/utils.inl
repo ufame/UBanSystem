@@ -43,7 +43,7 @@ SQL_ThreadError(const Handle: query, const error[], const errorCode, const Float
   new dbQuery[512];
   SQL_GetQueryString(query, dbQuery, charsmax(dbQuery));
 
-  log_error(AMX_ERR_NATIVE, "[SB SQL Error] Queue time: %.4f", queuetime);
-  log_error(AMX_ERR_NATIVE, "[SB SQL Error] Error[%d]: %s", errorCode, error);
-  log_error(AMX_ERR_NATIVE, "[SB SQL Error] Query with error: %s", dbQuery);
+  abort("[SB SQL Error] Queue time: %.4f", queuetime);
+  abort("[SB SQL Error] Error[%d]: %s", errorCode, error);
+  abort("[SB SQL Error] Query with error: %s", dbQuery);
 }
