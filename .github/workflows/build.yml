@@ -1,4 +1,4 @@
-name: CI
+name: build
 
 on:
   push:
@@ -13,6 +13,9 @@ on:
 
 env:
   PACKAGE_NAME: UBanSystem
+  STORE_README: 0
+  GENERATE_PLUGINS_INI: 1
+  PLUGINS_INI_POSTFIX: uban
 
 jobs:
   build:
@@ -52,8 +55,9 @@ jobs:
           version: "1.10.5428"
 
       - name: Compile plugins
-        working-directory: scripting/
+        working-directory: amxmodx/scripting/
         env:
+          GENERATE_PLUGINS_INI: ${{ env.GENERATE_PLUGINS_INI }}
           PLUGINS_INI_POSTFIX: ${{ env.PLUGINS_INI_POSTFIX }}
         run: |
           compile() {
@@ -66,6 +70,12 @@ jobs:
             echo -n "Compiling $sourcefile ... "
             amxxpc $sourcefile -o"$output_path" \
               -i"include"
+              
+            if [ ! -z "${GENERATE_PLUGINS_INI}" ]; then
+              plugin_ini_path="../configs/plugins-${PLUGINS_INI_POSTFIX}.ini"
+              touch $plugin_ini_path
+              echo $amxxfile >> $plugin_ini_path
+            fi
           }
           export -f compile
 
@@ -75,12 +85,13 @@ jobs:
         env:
           STORE_README: ${{ env.STORE_README }}
         run: |
-          package_amxmodx_path=publish/${{ env.PACKAGE_NAME }}/addons/amxmodx/
-          mkdir -p $package_amxmodx_path
-          mv configs $package_amxmodx_path
-          mv data $package_amxmodx_path
-          mv scripting $package_amxmodx_path
-          mv plugins $package_amxmodx_path
+          mkdir -p publish/${{ env.PACKAGE_NAME }}/addons
+          mv amxmodx/ publish/${{ env.PACKAGE_NAME }}/addons
+          mv tables.sql publish/
+
+          if [ ! -z "${STORE_README}" ]; then
+            mv README.md publish/
+          fi
 
       - name: Deploy artifact
         uses: actions/upload-artifact@v4.3.1
