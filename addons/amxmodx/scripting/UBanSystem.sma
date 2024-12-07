@@ -21,13 +21,13 @@ new DatabaseConfig[EDatabaseConfig];
 
 new Handle: DbHandle = Empty_Handle;
 
-#include <UBanSystem/utils.inl>
+#include "UBanSystem/utils.inl"
 
-#include <UBanSystem/users/create.inl>
+#include "UBanSystem/users/create.inl"
 
-#include <UBanSystem/actions/ban.inl>
+#include "UBanSystem/actions/ban.inl"
 
-#include <UBanSystem/commands/ban.inl>
+#include "UBanSystem/commands/ban.inl"
 
 public plugin_init() {
   register_dictionary("time.txt")
