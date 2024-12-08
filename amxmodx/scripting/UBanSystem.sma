@@ -24,8 +24,9 @@ new Handle: DbHandle = Empty_Handle;
 
 #include "UBanSystem/utils.inl"
 
-#include "UBanSystem/users/create.inl"
-#include "UBanSystem/users/update.inl"
+#include "UBanSystem/actions/users/create.inl"
+#include "UBanSystem/actions/users/update.inl"
+#include "UBanSystem/actions/users/check.inl"
 
 #include "UBanSystem/actions/ban.inl"
 
@@ -44,6 +45,8 @@ public plugin_init() {
 
 public client_putinserver(player_id) {
   CreateOrUpdateUser(player_id);
+
+  CheckUserIsBanned(player_id);
 }
 
 @CBasePlayer_SetClientUserInfoName(const player_id, infobuffer[], newName[]) {

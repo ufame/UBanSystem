@@ -27,5 +27,6 @@
   }
 
   BanAction(player_id, target, time, args[BanReason]);
+  UserKick(player_id, args[BanReason]);
 }
 

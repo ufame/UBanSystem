@@ -39,6 +39,10 @@ MysqlEscapeString(output[], len, const source[]) {
   }
 }
 
+UserKick(const player_id, const reason[]) {
+  server_cmd("kick #%d ^"%s^"", get_user_userid(player_id), reason);
+}
+
 SQL_ThreadError(const Handle: query, const error[], const errorCode, const Float: queuetime) {
   new dbQuery[512];
   SQL_GetQueryString(query, dbQuery, charsmax(dbQuery));
