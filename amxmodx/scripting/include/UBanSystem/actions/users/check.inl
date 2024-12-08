@@ -6,7 +6,7 @@ CheckUserIsBanned(const player_id) {
   formatex(dbQuery, charsmax(dbQuery), "SELECT reason FROM users JOIN bans ON bans.user_id = users.id WHERE bans.unban_timestamp > CURRENT_TIMESTAMP", steamId);
 
   new data[1];
-  data[0] = player_id;
+  data[0] = get_user_userid(player_id);
 
   SQL_ThreadQuery(DbHandle, "@CheckUserisBannedHandler", dbQuery, data, sizeof data);
 }
@@ -17,9 +17,10 @@ CheckUserIsBanned(const player_id) {
     return;
   }
 
-  new player_id = data[0];
+  new userId = data[0];
+  new player_id = find_player_ex(FindPlayer_MatchAuthId);
 
-  if (!is_user_connected(player_id))
+  if (!player_id)
     return;
 
   if (!SQL_NumResults(query))
