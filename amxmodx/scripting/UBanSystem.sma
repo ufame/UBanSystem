@@ -1,5 +1,6 @@
 #include <amxmodx>
 #include <amxmisc>
+#include <reapi>
 #include <json>
 #include <sqlx>
 #include <time>
@@ -24,6 +25,7 @@ new Handle: DbHandle = Empty_Handle;
 #include "UBanSystem/utils.inl"
 
 #include "UBanSystem/users/create.inl"
+#include "UBanSystem/users/update.inl"
 
 #include "UBanSystem/actions/ban.inl"
 
@@ -35,11 +37,20 @@ public plugin_init() {
   ReadMainConfig();
   ConnectionTest();
 
+  RegisterHookChain(RG_CBasePlayer_SetClientUserInfoName, "@CBasePlayer_SetClientUserInfoName", .post = 1);
+
   register_concmd("amx_ban", "@BanCommand");
 }
 
 public client_putinserver(player_id) {
   CreateOrUpdateUser(player_id);
+}
+
+@CBasePlayer_SetClientUserInfoName(const player_id, infobuffer[], newName[]) {
+  if (equal(infobuffer, newName))
+    return;
+
+  UpdateUserName(player_id, newName);
 }
 
 ReadMainConfig() {
