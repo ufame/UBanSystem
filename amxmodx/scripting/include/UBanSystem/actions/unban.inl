@@ -11,7 +11,7 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
   add(dbQuery, charsmax(dbQuery), fmt("SELECT user_name FROM names_history WHERE user_id = @user_id ORDER BY updated_at DESC LIMIT 1"));
 
   new data[1];
-  data[0] = get_user_authid(player_id);
+  data[0] = get_user_userid(player_id);
 
   SQL_ThreadQuery(DbHandle, "@UnBanActionHandler", dbQuery, data, sizeof data);
 }
@@ -23,7 +23,7 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
   }
 
   new userId = data[0];
-  new player_id = find_player_ex(FindPlayer_MatchAuthId);
+  new player_id = find_player_ex(FindPlayer_MatchAuthId, userId);
 
   if (!player_id)
     return;

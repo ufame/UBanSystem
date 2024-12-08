@@ -21,7 +21,7 @@ CheckUserIsBanned(const player_id) {
   }
 
   new userId = data[0];
-  new player_id = find_player_ex(FindPlayer_MatchAuthId);
+  new player_id = find_player_ex(FindPlayer_MatchAuthId, userId);
 
   if (!player_id)
     return;

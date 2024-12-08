@@ -27,8 +27,8 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
 
   new data[BanParameters];
 
-  data[AdminId] = player_id;
-  data[TargetId] = target_id;
+  data[AdminId] = get_user_userid(player_id);
+  data[TargetId] = get_user_userid(target_id);
   data[Time] = time;
   copy(data[Reason], charsmax(data[Reason]), reason);
 
@@ -41,9 +41,12 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
     return;
   }
 
-  new formattedTime[32];
-  get_time_length(data[AdminId], data[Time], timeunit_seconds, formattedTime, charsmax(formattedTime));
+  new player_id = find_player_ex(FindPlayer_MatchAuthId, data[AdminId]);
+  new target_id = find_player_ex(FindPlayer_MatchAuthId, data[TargetId]);
 
-  client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%n ^1for ^4%s^1. Reason: ^4%s^1.", data[AdminId], data[TargetId], formattedTime, data[Reason]);
-  server_cmd("kick #d Banned.", get_user_userid(data[TargetId]));
+  new formattedTime[32];
+  get_time_length(player_id, data[Time], timeunit_seconds, formattedTime, charsmax(formattedTime));
+
+  client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%n ^1for ^4%s^1. Reason: ^4%s^1.", player_id, target_id, formattedTime, data[Reason]);
+  server_cmd("kick #%d %s.", get_user_userid(target_id), data[Reason]);
 }
