@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths-ignore:
       - "**.md"
 
@@ -13,7 +13,6 @@ on:
 
 env:
   PACKAGE_NAME: UBanSystem
-  STORE_README: 0
   GENERATE_PLUGINS_INI: 1
   PLUGINS_INI_POSTFIX: uban
 
@@ -82,16 +81,10 @@ jobs:
           find . -type f -name "*.sma" -exec bash -c 'compile "$0"' {} \;
 
       - name: Move files
-        env:
-          STORE_README: ${{ env.STORE_README }}
         run: |
           mkdir -p publish/${{ env.PACKAGE_NAME }}/addons
           mv amxmodx/ publish/${{ env.PACKAGE_NAME }}/addons
           mv tables.sql publish/
-
-          if [ ! -z "${STORE_README}" ]; then
-            mv README.md publish/
-          fi
 
       - name: Deploy artifact
         uses: actions/upload-artifact@v4.3.1
