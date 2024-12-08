@@ -35,7 +35,7 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
   SQL_ThreadQuery(DbHandle, "@BanActionHandler", dbQuery, data, sizeof data);
 }
 
-@BanActionHandler(const failstate, const Handle: query, const error[], const errnum, const data[], const size, const Float: queuetime) {
+@BanActionHandler(const failstate, const Handle: query, const error[], const errnum, const data[BanParameters], const size, const Float: queuetime) {
   if (failstate != TQUERY_SUCCESS) {
     SQL_ThreadError(query, error, errnum, queuetime);
     return;
@@ -44,6 +44,6 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
   new formattedTime[32];
   get_time_length(data[AdminId], data[Time], timeunit_seconds, formattedTime, charsmax(formattedTime));
 
-  client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%s ^1for ^4%s^1. Reason: ^4%s^1.", data[AdminId], data[TargetId], formattedTime, data[Reason]);
-  server_cmd("kick #d Banned.", get_user_userid(player_id));
+  client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%n ^1for ^4%s^1. Reason: ^4%s^1.", data[AdminId], data[TargetId], formattedTime, data[Reason]);
+  server_cmd("kick #d Banned.", get_user_userid(data[TargetId]));
 }

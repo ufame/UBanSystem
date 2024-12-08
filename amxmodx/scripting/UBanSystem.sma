@@ -30,7 +30,7 @@ new Handle: DbHandle = Empty_Handle;
 #include "UBanSystem/commands/ban.inl"
 
 public plugin_init() {
-  register_dictionary("time.txt")
+  register_dictionary("time.txt");
 
   ReadMainConfig();
   ConnectionTest();
