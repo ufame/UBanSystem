@@ -48,6 +48,23 @@ jobs:
           echo "COMMIT_SHA=$SHA" >> $GITHUB_OUTPUT        
           echo "SEMVER=${{ steps.semver_parser.outputs.fullversion }}" >> $GITHUB_OUTPUT
 
+      - name: Setup latest ReAPI includes
+        env:
+          REPO: "s1lentq/reapi"
+        run: |
+          mkdir -p dep/reapi
+          cd dep/reapi
+
+          curl \
+            --silent \
+            https://api.github.com/repos/$REPO/releases/latest | \
+            jq .assets[0].browser_download_url -r | \
+            xargs wget
+
+          7z x *.zip
+
+          echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
+
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@v1.1.0
         with:
@@ -58,6 +75,7 @@ jobs:
         env:
           GENERATE_PLUGINS_INI: ${{ env.GENERATE_PLUGINS_INI }}
           PLUGINS_INI_POSTFIX: ${{ env.PLUGINS_INI_POSTFIX }}
+          REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
           compile() {
             sourcefile=$1
@@ -68,7 +86,8 @@ jobs:
 
             echo -n "Compiling $sourcefile ... "
             amxxpc $sourcefile -o"$output_path" \
-              -i"include"
+              -i"include" \
+              -i"${REAPI_INCLUDE}"
               
             if [ ! -z "${GENERATE_PLUGINS_INI}" ]; then
               plugin_ini_path="../configs/plugins-${PLUGINS_INI_POSTFIX}.ini"
