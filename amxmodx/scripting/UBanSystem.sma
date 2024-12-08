@@ -29,8 +29,10 @@ new Handle: DbHandle = Empty_Handle;
 #include "UBanSystem/actions/users/check.inl"
 
 #include "UBanSystem/actions/ban.inl"
+#include "UBanSystem/actions/unban.inl"
 
 #include "UBanSystem/commands/ban.inl"
+#include "UBanSystem/commands/unban.inl"
 
 public plugin_init() {
   register_dictionary("time.txt");
@@ -41,6 +43,7 @@ public plugin_init() {
   RegisterHookChain(RG_CBasePlayer_SetClientUserInfoName, "@CBasePlayer_SetClientUserInfoName", .post = 1);
 
   register_concmd("amx_ban", "@BanCommand");
+  register_concmd("amx_unban", "@UnbanCommand");
 }
 
 public client_putinserver(player_id) {
