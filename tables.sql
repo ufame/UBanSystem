@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS bans (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   admin_id INT DEFAULT NOT NULL,
+  unbanned_by_user_id INT DEFAULT NULL,
   reason VARCHAR(255),
   ban_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   ban_duration INT,
