@@ -48,5 +48,5 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
   get_time_length(player_id, data[Time], timeunit_seconds, formattedTime, charsmax(formattedTime));
 
   client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%n ^1for ^4%s^1. Reason: ^4%s^1.", player_id, target_id, formattedTime, data[Reason]);
-  server_cmd("kick #%d %s.", get_user_userid(target_id), data[Reason]);
+  UserKick(player_id, args[BanReason]);
 }
