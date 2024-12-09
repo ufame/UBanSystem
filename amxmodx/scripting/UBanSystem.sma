@@ -62,7 +62,7 @@ public client_putinserver(player_id) {
 ReadMainConfig() {
   new configFile[64];
   get_configsdir(configFile, charsmax(configFile));
-  add(configFile, charsmax(configFile), "/main.json");
+  add(configFile, charsmax(configFile), "/UBanSystem/main.json");
 
   new JSON: config = json_parse(
     configFile,
