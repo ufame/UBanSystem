@@ -38,3 +38,5 @@ CREATE TABLE IF NOT EXISTS names_history (
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 CREATE UNIQUE INDEX user_steam ON users(steam);
+ALTER TABLE ips_history ADD UNIQUE KEY (user_id, ip);
+ALTER TABLE names_history ADD UNIQUE KEY (user_id, user_name);
