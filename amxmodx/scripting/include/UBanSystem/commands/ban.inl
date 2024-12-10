@@ -1,5 +1,5 @@
 @BanCommand(const player_id) {
-  if (read_argc() > 4) {
+  if (read_argc() < 4) {
     client_print(player_id, print_console, "[Ban Command] Syntax: amx_ban time ^"#userid OR Name OR steamid^" ^"reason^"");
 
     return;
@@ -18,7 +18,13 @@
   read_argv(3, args[BanReason], charsmax(args[BanReason]));
 
   new time = ParseBanTime(args[BanTime]);
-  new target = cmd_target(player_id, args[BanTarget]);
+  new target = find_player_ex(FindPlayer_MatchName, args[BanTarget]);
+
+  if (!target)
+    find_player_ex(FindPlayer_MatchAuthId, args[BanTarget]);
+
+  if (!target)
+    find_player_ex(FindPlayer_MatchUserId, args[BanTarget]);
 
   if (!target) {
     client_print(player_id, print_console, "[Ban Command] Target not found.");
