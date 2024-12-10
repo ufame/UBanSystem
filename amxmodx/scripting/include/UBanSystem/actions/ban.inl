@@ -18,12 +18,14 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
   get_user_authid(player_id, adminSteam, MAX_AUTHID_LENGTH - 1);
   get_user_authid(target_id, targetSteam, MAX_AUTHID_LENGTH - 1);
 
-  new dbQuery[512];
+  new dbQuery[2048];
 
   formatex(dbQuery, charsmax(dbQuery), "SET @admin_id = (SELECT id FROM users WHERE steam = '%s'); ", adminSteam);
   add(dbQuery, charsmax(dbQuery), fmt("SET @target_id = (SELECT id FROM users WHERE steam = '%s'); ", targetSteam));
   add(dbQuery, charsmax(dbQuery), fmt("INSERT INTO bans (user_id, admin_id, reason, ban_duration, ban_timestamp, unban_timestamp) "));
   add(dbQuery, charsmax(dbQuery), fmt("VALUES (@target_id, @admin_id, '%s', %d, CURRENT_TIMESTAMP, DATE_ADD(CURRENT_TIMESTAMP, INERVAL %d SECONDS));", reason, time, time));
+
+  log_amx(dbQuery);
 
   new data[BanParameters];
 
@@ -41,11 +43,11 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
     return;
   }
 
-  new player_id = find_player_ex(FindPlayer_MatchAuthId, data[AdminId]);
-  new target_id = find_player_ex(FindPlayer_MatchAuthId, data[TargetId]);
+  new player_id = find_player_ex(FindPlayer_MatchUserId, data[AdminId]);
+  new target_id = find_player_ex(FindPlayer_MatchUserId, data[TargetId]);
 
   new formattedTime[32];
-  get_time_length(player_id, data[Time], timeunit_seconds, formattedTime, charsmax(formattedTime));
+  get_time_length(player_id, data[Time], timeunit_minutes, formattedTime, charsmax(formattedTime));
 
   client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%n ^1for ^4%s^1. Reason: ^4%s^1.", player_id, target_id, formattedTime, data[Reason]);
   UserKick(player_id, data[Reason]);
