@@ -78,11 +78,11 @@ ReadMainConfig() {
     set_fail_state("JSON config must contain a valid object (%s).", configFile);
   }
 
-  json_object_get_string(config, "database.type", DatabaseConfig[DbType], charsmax(DatabaseConfig[]), .dot_not = true);
-  json_object_get_string(config, "database.host", DatabaseConfig[DbHost], charsmax(DatabaseConfig[]), .dot_not = true);
-  json_object_get_string(config, "database.user", DatabaseConfig[DbUser], charsmax(DatabaseConfig[]), .dot_not = true);
-  json_object_get_string(config, "database.password", DatabaseConfig[DbPassword], charsmax(DatabaseConfig[]), .dot_not = true);
-  json_object_get_string(config, "database.database", DatabaseConfig[DbDatabase], charsmax(DatabaseConfig[]), .dot_not = true);
+  json_object_get_string(config, "database.type", DatabaseConfig[DbType], charsmax(DatabaseConfig[DbType]), .dot_not = true);
+  json_object_get_string(config, "database.host", DatabaseConfig[DbHost], charsmax(DatabaseConfig[DbHost]), .dot_not = true);
+  json_object_get_string(config, "database.user", DatabaseConfig[DbUser], charsmax(DatabaseConfig[DbUser]), .dot_not = true);
+  json_object_get_string(config, "database.password", DatabaseConfig[DbPassword], charsmax(DatabaseConfig[DbPassword]), .dot_not = true);
+  json_object_get_string(config, "database.database", DatabaseConfig[DbDatabase], charsmax(DatabaseConfig[DbDatabase]), .dot_not = true);
 
   json_free(config);
 }
