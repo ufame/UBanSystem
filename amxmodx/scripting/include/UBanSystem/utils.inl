@@ -9,9 +9,6 @@ ParseBanTime(const value[]) {
     if (isdigit(value[i])) {
       currentNumber = currentNumber * 10 + (value[i] - '0');
     } else {
-      result += currentNumber * multipliers[multiplierIndex];
-      currentNumber = 0;
-
       switch (value[i]) {
         case 'i': multiplierIndex = 1;
         case 'h': multiplierIndex = 2;
@@ -20,6 +17,9 @@ ParseBanTime(const value[]) {
         case 'y': multiplierIndex = 5;
         default: break;
       }
+
+      result += currentNumber * multipliers[multiplierIndex];
+      currentNumber = 0;
     }
   }
 
