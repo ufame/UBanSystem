@@ -23,7 +23,7 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
   }
 
   new userId = data[0];
-  new player_id = find_player_ex(FindPlayer_MatchAuthId, userId);
+  new player_id = find_player_ex(FindPlayer_MatchUserId, userId);
 
   if (!player_id)
     return;
