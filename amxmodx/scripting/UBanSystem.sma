@@ -6,7 +6,7 @@
 #include <time>
 
 public stock const PluginName[] = "Ufame's Ban System";
-public stock const PluginVersion[] = "0.0.1";
+public stock const PluginVersion[] = "0.1.0";
 public stock const PluginAuthor[] = "ufame";
 public stock const PluginDescription[] = "Open source ban system for AmxModX";
 
