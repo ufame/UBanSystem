@@ -4,7 +4,7 @@ CheckUserIsBanned(const player_id) {
 
   new dbQuery[512];
   formatex(dbQuery, charsmax(dbQuery),
-    "SELECT reason FROM users JOIN bans ON bans.user_id = users.id WHERE (bans.unban_timestamp IS NULL OR bans.unban_timestamp > CURRENT_TIMESTAMP)",
+    "SELECT reason FROM users JOIN bans ON bans.user_id = users.id WHERE users.steam = '%s' AND (bans.unban_timestamp IS NULL OR bans.unban_timestamp > CURRENT_TIMESTAMP);",
     steamId
   );
 
@@ -21,7 +21,7 @@ CheckUserIsBanned(const player_id) {
   }
 
   new userId = data[0];
-  new player_id = find_player_ex(FindPlayer_MatchAuthId, userId);
+  new player_id = find_player_ex(FindPlayer_MatchUserId, userId);
 
   if (!player_id)
     return;
