@@ -96,6 +96,8 @@ ConnectionTest() {
     DatabaseConfig[DbDatabase]
   );
 
+  SQL_SetCharset(DbHandle, "utf8");
+
   new errorMessage[512], errorCode;
   new Handle: connectionHandle = SQL_Connect(DbHandle, errorCode, errorMessage, charsmax(errorMessage));
 
