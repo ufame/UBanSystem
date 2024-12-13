@@ -1,5 +1,5 @@
 @BanCommand(const player_id) {
-  static const banFlags =
+  new const banFlags = 
     AccessFlagsConfig[AccessFlags_Ban] |
     AccessFlagsConfig[AccessFlags_BanOthers];
 

@@ -37,10 +37,10 @@ FindPlayerId(const args[]) {
 
   player_id = find_player_ex(FindPlayer_MatchName, args);
 
-  if (!target)
+  if (!player_id)
     player_id = find_player_ex(FindPlayer_MatchAuthId, args);
 
-  if (!target)
+  if (!player_id)
     player_id = find_player_ex(FindPlayer_MatchUserId, args);
 
   return player_id;

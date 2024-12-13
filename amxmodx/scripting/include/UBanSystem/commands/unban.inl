@@ -1,5 +1,5 @@
 @UnbanCommand(const player_id) {
-  static const unbanFlags = 
+  new const unbanFlags = 
     AccessFlagsConfig[AccessFlags_UnBan_Self] | 
     AccessFlagsConfig[AccessFlags_UnBan_Others];
 
