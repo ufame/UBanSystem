@@ -32,6 +32,10 @@ UserKick(const player_id, const reason[]) {
   server_cmd("kick #%d ^"%s^"", get_user_userid(player_id), reason);
 }
 
+bool: CheckUserAccess(const player_id, const EAccessFlagsConfig: access) {
+  return bool: (get_user_flags(player_id) & AccessFlagsConfig[access]);
+}
+
 FindPlayerId(const args[]) {
   new player_id = 0;
 

@@ -1,9 +1,5 @@
 @BanCommand(const player_id) {
-  new const banFlags = 
-    AccessFlagsConfig[AccessFlags_Ban] |
-    AccessFlagsConfig[AccessFlags_BanOthers];
-
-  if (~get_user_flags(player_id) & banFlags)
+  if (!CheckUserAccess(player_id, AccessFlags_Ban) && !CheckUserAccess(player_id, AccessFlags_BanOthers))
     return;
 
   if (read_argc() < 4) {
@@ -34,8 +30,8 @@
   }
 
   if (
-    get_user_flags(target) & AccessFlagsConfig[AccessFlags_Immunity] &&
-    ~get_user_flags(player_id) & AccessFlagsConfig[AccessFlags_BanOthers]
+    CheckUserAccess(target, AccessFlags_Immunity) &&
+    !CheckUserAccess(player_id, AccessFlags_BanOthers)
   ) {
     client_print(player_id, print_console, "[Ban Command] You can't ban players who have immunity.");
 

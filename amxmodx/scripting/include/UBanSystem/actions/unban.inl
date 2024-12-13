@@ -1,4 +1,4 @@
-UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) { 
+UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH], const bool: canUnbanAny = false) { 
   new steamId[MAX_AUTHID_LENGTH];
   get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH - 1);
 
@@ -9,7 +9,7 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
   add(dbQuery, charsmax(dbQuery), "UPDATE bans SET unban_timestamp = CURRENT_TIMESTAMP, unbanned_by_user_id = @admin_id ");
   add(dbQuery, charsmax(dbQuery), "WHERE user_id = @user_id AND (unban_timestamp IS NULL OR unban_timestamp > CURRENT_TIMESTAMP) ");
 
-  if (get_user_flags(player_id) & AccessFlagsConfig[AccessFlags_UnBan_Self]) {
+  if (!canUnbanAny) {
     add(dbQuery, charsmax(dbQuery), "AND admin_id = @admin_id");
   }
 

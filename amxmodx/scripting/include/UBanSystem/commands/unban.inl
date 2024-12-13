@@ -1,9 +1,5 @@
 @UnbanCommand(const player_id) {
-  new const unbanFlags = 
-    AccessFlagsConfig[AccessFlags_UnBan_Self] | 
-    AccessFlagsConfig[AccessFlags_UnBan_Others];
-
-  if (~get_user_flags(player_id) & unbanFlags)
+  if (!CheckUserAccess(player_id, AccessFlags_UnBan_Self) && !CheckUserAccess(player_id, AccessFlags_UnBan_Others))
     return;
 
   if (read_argc() > 2) {
@@ -15,5 +11,5 @@
   new steamId[MAX_AUTHID_LENGTH];
   read_argv(1, steamId, MAX_AUTHID_LENGTH - 1);
 
-  UnBanAction(player_id, steamId);
+  UnBanAction(player_id, steamId, CheckUserAccess(player_id, AccessFlags_UnBan_Others));
 }
