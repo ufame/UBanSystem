@@ -5,5 +5,12 @@
     "user": "root",
     "password": "root",
     "database": "ubansystem"
+  },
+  "access_flags": {
+    "immunity": "a",        // Immunity from bans
+    "ban": "d",             // Can ban players flag
+    "ban_others": "s",      // Can ban other admins flag
+    "unban_self": "d",      // Can unban self bans flag
+    "unban_others": "s"    // Can unban players who have been banned by another admin
   }
 }
