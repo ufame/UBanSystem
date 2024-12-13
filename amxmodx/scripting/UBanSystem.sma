@@ -55,10 +55,9 @@ public plugin_init() {
   register_concmd("amx_unban", "@UnbanCommand");
 }
 
-public client_putinserver(player_id) {
-  CreateOrUpdateUser(player_id);
-
-  CheckUserIsBanned(player_id);
+public client_authorized(player_id, const authid[]) {
+  CreateOrUpdateUser(player_id, authid);
+  CheckUserIsBanned(player_id, authid);
 }
 
 @CBasePlayer_SetClientUserInfoName(const player_id, infobuffer[], newName[]) {

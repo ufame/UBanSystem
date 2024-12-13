@@ -1,11 +1,8 @@
-CheckUserIsBanned(const player_id) {
-  new steamId[MAX_AUTHID_LENGTH];
-  get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH - 1);
-
+CheckUserIsBanned(const player_id, const authid[]) {
   new dbQuery[512];
   formatex(dbQuery, charsmax(dbQuery),
     "SELECT reason FROM users JOIN bans ON bans.user_id = users.id WHERE users.steam = '%s' AND (bans.unban_timestamp IS NULL OR bans.unban_timestamp > CURRENT_TIMESTAMP);",
-    steamId
+    authid
   );
 
   new data[1];

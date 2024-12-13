@@ -1,14 +1,12 @@
-CreateOrUpdateUser(const player_id) {
+CreateOrUpdateUser(const player_id, const authid[]) {
   enum Player {
     name[MAX_NAME_LENGTH],
-    authid[MAX_AUTHID_LENGTH],
     ip[MAX_IP_LENGTH],
   };
 
   new playerData[Player];
 
   get_user_name(player_id, playerData[name], MAX_NAME_LENGTH - 1);
-  get_user_authid(player_id, playerData[authid], MAX_AUTHID_LENGTH - 1);
   get_user_ip(player_id, playerData[ip], MAX_IP_LENGTH - 1, .without_port = 1);
 
   new escapedName[MAX_NAME_LENGTH * 2];
@@ -16,8 +14,8 @@ CreateOrUpdateUser(const player_id) {
 
   new dbQuery[512];
 
-  formatex(dbQuery, charsmax(dbQuery), "INSERT INTO users (steam) VALUES ('%s') ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP; ", playerData[authid]);
-  add(dbQuery, charsmax(dbQuery), fmt("SET @user_id = (SELECT id FROM users WHERE steam = '%s'); ", playerData[authid]));
+  formatex(dbQuery, charsmax(dbQuery), "INSERT INTO users (steam) VALUES ('%s') ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP; ", authid);
+  add(dbQuery, charsmax(dbQuery), fmt("SET @user_id = (SELECT id FROM users WHERE steam = '%s'); ", authid));
   add(dbQuery, charsmax(dbQuery), fmt("INSERT INTO ips_history (user_id, ip) VALUES (@user_id, '%s') ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP; ", playerData[ip]));
   add(dbQuery, charsmax(dbQuery), fmt("INSERT INTO names_history (user_id, user_name) VALUES (@user_id, '%s') ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP;", escapedName));
 
