@@ -1,13 +1,18 @@
-UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
+UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) { 
   new steamId[MAX_AUTHID_LENGTH];
-  get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH -1);
+  get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH - 1);
 
   new dbQuery[512];
 
   formatex(dbQuery, charsmax(dbQuery), "SET @admin_id = (SELECT id FROM users WHERE steam = '%s');", steamId);
   add(dbQuery, charsmax(dbQuery), fmt("SET @user_id = (SELECT id FROM users WHERE steam = '%s');", unbanUserSteamId));
-  add(dbQuery, charsmax(dbQuery), fmt("UPDATE bans SET unban_timestamp = CURRENT_TIMESTAMP, unbanned_by_user_id = @admin_id "));
-  add(dbQuery, charsmax(dbQuery), fmt("WHERE user_id = @user_id AND (unban_timestamp IS NULL OR unban_timestamp > CURRENT_TIMESTAMP);"));
+  add(dbQuery, charsmax(dbQuery), "UPDATE bans SET unban_timestamp = CURRENT_TIMESTAMP, unbanned_by_user_id = @admin_id ");
+  add(dbQuery, charsmax(dbQuery), "WHERE user_id = @user_id AND (unban_timestamp IS NULL OR unban_timestamp > CURRENT_TIMESTAMP) ");
+
+  if (get_user_flags(player_id) & AccessFlagsConfig[AccessFlags_UnBan_Self]) {
+    add(dbQuery, charsmax(dbQuery), "AND admin_id = @admin_id;");
+  }
+
   add(dbQuery, charsmax(dbQuery), fmt("SELECT user_name FROM names_history WHERE user_id = @user_id ORDER BY updated_at DESC LIMIT 1"));
 
   new data[1];
@@ -28,8 +33,11 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
   if (!player_id)
     return;
 
-  if (!SQL_NumResults(query))
+  if (!SQL_AffectedRows(query)) {
+    client_print(player_id, print_console, "[UnBan Action] No active ban found for the provided SteamID.");
+
     return;
+  }
 
   new userName[MAX_NAME_LENGTH];
   SQL_ReadResult(query, 0, userName, MAX_NAME_LENGTH - 1);

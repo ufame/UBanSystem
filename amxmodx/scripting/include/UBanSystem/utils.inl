@@ -28,6 +28,31 @@ ParseBanTime(const value[]) {
   return result;
 }
 
+UserKick(const player_id, const reason[]) {
+  server_cmd("kick #%d ^"%s^"", get_user_userid(player_id), reason);
+}
+
+FindPlayerId(const args[]) {
+  new player_id = 0;
+
+  player_id = find_player_ex(FindPlayer_MatchName, args);
+
+  if (!target)
+    player_id = find_player_ex(FindPlayer_MatchAuthId, args);
+
+  if (!target)
+    player_id = find_player_ex(FindPlayer_MatchUserId, args);
+
+  return player_id;
+}
+
+LoadAccessFlags(const JSON: config, const key[]) {
+  new flags[32];
+  json_object_get_string(config, key, flags, charsmax(flags), .dot_not = true);
+
+  return read_flags(flags);
+}
+
 MysqlEscapeString(output[], len, const source[]) {
   static const inChars[][] = { "\\", "\0", "\n", "\r", "\x1a", "'", "^"" };
   static const outChars[][] = { "\\\\", "\\0", "\\n", "\\r", "\Z", "\'", "\^"" };
@@ -37,10 +62,6 @@ MysqlEscapeString(output[], len, const source[]) {
   for (new i = 0; i < sizeof inChars; i++) {
     replace_string(output, len, inChars[i], outChars[i]);
   }
-}
-
-UserKick(const player_id, const reason[]) {
-  server_cmd("kick #%d ^"%s^"", get_user_userid(player_id), reason);
 }
 
 SQL_ThreadError(const Handle: query, const error[], const errorCode, const Float: queuetime) {

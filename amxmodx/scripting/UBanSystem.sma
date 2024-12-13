@@ -18,7 +18,16 @@ enum EDatabaseConfig {
   DbDatabase[64],
 }
 
+enum EAccessFlagsConfig {
+  AccessFlags_Immunity,
+  AccessFlags_Ban,
+  AccessFlags_BanOthers,
+  AccessFlags_UnBan_Self,
+  AccessFlags_UnBan_Others
+}
+
 new DatabaseConfig[EDatabaseConfig];
+new AccessFlagsConfig[EAccessFlagsConfig];
 
 new Handle: DbHandle = Empty_Handle;
 
@@ -83,6 +92,12 @@ ReadMainConfig() {
   json_object_get_string(config, "database.user", DatabaseConfig[DbUser], charsmax(DatabaseConfig[DbUser]), .dot_not = true);
   json_object_get_string(config, "database.password", DatabaseConfig[DbPassword], charsmax(DatabaseConfig[DbPassword]), .dot_not = true);
   json_object_get_string(config, "database.database", DatabaseConfig[DbDatabase], charsmax(DatabaseConfig[DbDatabase]), .dot_not = true);
+
+  AccessFlagsConfig[AccessFlags_Immunity] = LoadAccessFlags(config, "access_flags.immunity");
+  AccessFlagsConfig[AccessFlags_Ban] = LoadAccessFlags(config, "access_flags.ban");
+  AccessFlagsConfig[AccessFlags_BanOthers] = LoadAccessFlags(config, "access_flags.ban_others");
+  AccessFlagsConfig[AccessFlags_UnBan_Self] = LoadAccessFlags(config, "access_flags.unban_self");
+  AccessFlagsConfig[AccessFlags_UnBan_Others] = LoadAccessFlags(config, "access_flags.unban_others");
 
   json_free(config);
 }
