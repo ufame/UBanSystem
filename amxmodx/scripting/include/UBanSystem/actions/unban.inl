@@ -10,10 +10,11 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH]) {
   add(dbQuery, charsmax(dbQuery), "WHERE user_id = @user_id AND (unban_timestamp IS NULL OR unban_timestamp > CURRENT_TIMESTAMP) ");
 
   if (get_user_flags(player_id) & AccessFlagsConfig[AccessFlags_UnBan_Self]) {
-    add(dbQuery, charsmax(dbQuery), "AND admin_id = @admin_id;");
+    add(dbQuery, charsmax(dbQuery), "AND admin_id = @admin_id");
   }
 
-  add(dbQuery, charsmax(dbQuery), fmt("SELECT user_name FROM names_history WHERE user_id = @user_id ORDER BY updated_at DESC LIMIT 1"));
+  add(dbQuery, charsmax(dbQuery), ";");
+  add(dbQuery, charsmax(dbQuery), fmt("SELECT user_name FROM names_history WHERE user_id = @user_id ORDER BY updated_at DESC LIMIT 1;"));
 
   new data[1];
   data[0] = get_user_userid(player_id);
