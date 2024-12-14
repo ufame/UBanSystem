@@ -12,5 +12,9 @@
     "ban_others": "s",      // Can ban other admins flag
     "unban_self": "d",      // Can unban self bans flag
     "unban_others": "s"    // Can unban players who have been banned by another admin
+  },
+  "settings": {
+    "kick_after_ban": true,
+    "kick_after_ban_time": 3.0
   }
 }

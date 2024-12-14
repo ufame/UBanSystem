@@ -48,5 +48,17 @@ BanAction(const player_id, const target_id, const time, const reason[]) {
   get_time_length(player_id, data[Time], timeunit_seconds, formattedTime, charsmax(formattedTime));
 
   client_print_color(0, print_team_default, "^4*** ^3%n ^1banned ^3%n ^1for ^4%s^1. Reason: ^4%s^1.", player_id, target_id, formattedTime, data[Reason]);
-  UserKick(target_id, data[Reason]);
+  
+  if (SettingsConfig[Settings_KickAfterBan]) {
+    set_task(SettingsConfig[Settings_KickAfterBan_Time], "@Task_KickAfterBan", target_id + TASK_KICK_ID, data[Reason], sizeof data[Reason]);
+  }
+}
+
+@Task_KickAfterBan(const reason[], id) {
+  id -= TASK_KICK_ID;
+
+  if (!is_user_connected(id))
+    return;
+
+  UserKick(id, reason);
 }

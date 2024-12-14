@@ -10,6 +10,8 @@ public stock const PluginVersion[] = "0.1.0";
 public stock const PluginAuthor[] = "ufame";
 public stock const PluginDescription[] = "Open source ban system for AmxModX";
 
+const TASK_KICK_ID = 17829;
+
 enum EDatabaseConfig {
   DbType[16],
   DbHost[32],
@@ -26,8 +28,14 @@ enum EAccessFlagsConfig {
   AccessFlags_UnBan_Others
 }
 
+enum ESettingsConfig {
+  bool: Settings_KickAfterBan,
+  Float: Settings_KickAfterBan_Time
+};
+
 new DatabaseConfig[EDatabaseConfig];
 new AccessFlagsConfig[EAccessFlagsConfig];
+new SettingsConfig[ESettingsConfig];
 
 new Handle: DbHandle = Empty_Handle;
 
@@ -97,6 +105,9 @@ ReadMainConfig() {
   AccessFlagsConfig[AccessFlags_BanOthers] = LoadAccessFlags(config, "access_flags.ban_others");
   AccessFlagsConfig[AccessFlags_UnBan_Self] = LoadAccessFlags(config, "access_flags.unban_self");
   AccessFlagsConfig[AccessFlags_UnBan_Others] = LoadAccessFlags(config, "access_flags.unban_others");
+
+  SettingsConfig[Settings_KickAfterBan] = json_object_get_bool(config, "settings.kick_after_ban", .dot_not = true);
+  SettingsConfig[Settings_KickAfterBan_Time] = json_object_get_real(config, "settings.kick_after_ban_time", .dot_not = true);
 
   json_free(config);
 }
