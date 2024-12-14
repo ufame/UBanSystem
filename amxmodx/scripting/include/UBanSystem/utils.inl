@@ -1,29 +1,32 @@
 ParseBanTime(const value[]) {
-  new result = 0;
-
-  new multipliers[] = { 1, 60, 3600, 86400, 2592000, 31104000 };
-  new multiplierIndex = 0;
+  new result = 0
   new currentNumber = 0;
+
+  static units[][] = {
+    { 's', 1 },          // Секунды
+    { 'i', 60 },         // Минуты
+    { 'h', 3600 },       // Часы
+    { 'd', 86400 },      // Дни
+    { 'w', 604800 },     // Недели
+    { 'm', 2592000 },    // Месяцы
+    { 'y', 31104000 }    // Годы
+  };
 
   for (new i = 0; value[i] != EOS; i++) {
     if (isdigit(value[i])) {
       currentNumber = currentNumber * 10 + (value[i] - '0');
     } else {
-      switch (value[i]) {
-        case 'i': multiplierIndex = 1;
-        case 'h': multiplierIndex = 2;
-        case 'd': multiplierIndex = 3;
-        case 'm': multiplierIndex = 4;
-        case 'y': multiplierIndex = 5;
-        default: break;
+      for (new j = 0; j < sizeof(units); j++) {
+        if (units[j][0] == value[i]) {
+          result += currentNumber * units[j][1];
+          currentNumber = 0;
+          break;
+        }
       }
-
-      result += currentNumber * multipliers[multiplierIndex];
-      currentNumber = 0;
     }
   }
 
-  result += currentNumber * multipliers[multiplierIndex];
+  result += currentNumber;
 
   return result;
 }
