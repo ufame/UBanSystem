@@ -1,34 +1,45 @@
-UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH], const bool: canUnbanAny = false) { 
+#include <amxmodx>
+#include <sqlx>
+
+enum _: UnbanActionData_Struct {
+  Data_AdminUserId,
+  Data_PlayerSteamId[MAX_AUTHID_LENGTH]
+}
+
+UnBanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny = false) { 
   new steamId[MAX_AUTHID_LENGTH];
   get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH - 1);
 
   new dbQuery[512];
 
-  formatex(dbQuery, charsmax(dbQuery), "SET @admin_id = (SELECT id FROM users WHERE steam = '%s');", steamId);
-  add(dbQuery, charsmax(dbQuery), fmt("SET @user_id = (SELECT id FROM users WHERE steam = '%s');", unbanUserSteamId));
-  add(dbQuery, charsmax(dbQuery), "UPDATE bans SET unban_timestamp = CURRENT_TIMESTAMP, unbanned_by_user_id = @admin_id ");
-  add(dbQuery, charsmax(dbQuery), "WHERE user_id = @user_id AND (unban_timestamp IS NULL OR unban_timestamp > CURRENT_TIMESTAMP) ");
+  add(dbQuery, charsmax(dbQuery), "UPDATE bans ");
+  add(dbQuery, charsmax(dbQuery), fmt("JOIN users AS target_user ON target_user.steam = '%s' ", unbanUserSteamId));
+  add(dbQuery, charsmax(dbQuery), fmt("JOIN users AS admin_user ON admin_user.steam = '%s' ", steamId));
+  add(dbQuery, charsmax(dbQuery), "SET bans.unban_timestamp = CURRENT_TIMESTAMP, ");
+  add(dbQuery, charsmax(dbQuery), "bans.unbanned_by_user_id = admin_user.id ");
+  add(dbQuery, charsmax(dbQuery), "WHERE bans.user_id = target_user.id ");
+  add(dbQuery, charsmax(dbQuery), "AND (bans.unban_timestamp IS NULL OR bans.unban_timestamp > CURRENT_TIMESTAMP) ");
 
   if (!canUnbanAny) {
-    add(dbQuery, charsmax(dbQuery), "AND admin_id = @admin_id");
+    add(dbQuery, charsmax(dbQuery), "AND bans.admin_id = admin_user.id");
   }
 
   add(dbQuery, charsmax(dbQuery), ";");
-  add(dbQuery, charsmax(dbQuery), fmt("SELECT user_name FROM names_history WHERE user_id = @user_id ORDER BY updated_at DESC LIMIT 1;"));
 
-  new data[1];
-  data[0] = get_user_userid(player_id);
+  new data[UnbanActionData_Struct];
+  data[Data_AdminUserId] = get_user_userid(player_id);
+  copy(data[Data_PlayerSteamId], MAX_AUTHID_LENGTH - 1, unbanUserSteamId);
 
   SQL_ThreadQuery(DbHandle, "@UnBanActionHandler", dbQuery, data, sizeof data);
 }
 
-@UnBanActionHandler(const failstate, const Handle: query, const error[], const errnum, const data[], const size, const Float: queuetime) {
+@UnBanActionHandler(const failstate, const Handle: query, const error[], const errnum, const data[UnbanActionData_Struct], const size, const Float: queuetime) {
   if (failstate != TQUERY_SUCCESS) {
     SQL_ThreadError(query, error, errnum, queuetime);
     return;
   }
 
-  new userId = data[0];
+  new userId = data[Data_AdminUserId];
   new player_id = find_player_ex(FindPlayer_MatchUserId, userId);
 
   if (!player_id)
@@ -40,8 +51,31 @@ UnBanAction(const player_id, const unbanUserSteamId[MAX_AUTHID_LENGTH], const bo
     return;
   }
 
+  new dbQuery[512];
+
+  add(dbQuery, charsmax(dbQuery), fmt("SELECT names_history.user_name "));
+  add(dbQuery, charsmax(dbQuery), fmt("FROM names_history "));
+  add(dbQuery, charsmax(dbQuery), fmt("JOIN users ON users.steam = '%s' ", data[Data_PlayerSteamId]));
+  add(dbQuery, charsmax(dbQuery), fmt("WHERE names_history.user_id = users.id "));
+  add(dbQuery, charsmax(dbQuery), fmt("ORDER BY names_history.updated_at DESC LIMIT 1;"));
+
+  SQL_ThreadQuery(DbHandle, "@UnBanActionInfoHandler", dbQuery, data, sizeof data);
+}
+
+@UnBanActionInfoHandler(const failstate, const Handle: query, const error[], const errnum, const data[UnbanActionData_Struct], const size, const Float: queuetime) {
+  if (failstate != TQUERY_SUCCESS) {
+    SQL_ThreadError(query, error, errnum, queuetime);
+    return;
+  }
+
+  new userId = data[Data_AdminUserId];
+  new player_id = find_player_ex(FindPlayer_MatchUserId, userId);
+
+  if (!player_id)
+    return;
+
   new userName[MAX_NAME_LENGTH];
   SQL_ReadResult(query, 0, userName, MAX_NAME_LENGTH - 1);
 
-  client_print_color(0, print_team_default, "^4*** ^3%n ^1unbanned ^3%s^1.", player_id, userName);
+  client_print_color(0, print_team_default, "^4*** ^3%n^1 unbanned ^3%s^1.", player_id, userName);
 }
