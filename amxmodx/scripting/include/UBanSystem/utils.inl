@@ -2,6 +2,9 @@ ParseBanTime(const value[]) {
   new result = 0
   new currentNumber = 0;
 
+  if (isdigit(value[0]) && str_to_num(value[0]) <= 0)
+    return 0;
+
   static units[][] = {
     { 's', 1 },          // Секунды
     { 'i', 60 },         // Минуты
