@@ -12,30 +12,30 @@ public stock const PluginDescription[] = "Open source ban system for AmxModX";
 
 const TASK_KICK_ID = 17829;
 
-enum EDatabaseConfig {
-  DbType[16],
-  DbHost[32],
-  DbUser[32],
-  DbPassword[64],
-  DbDatabase[64],
-}
+enum DatabaseConfig_Struct {
+  DbConfig_Type[16],
+  DbConfig_Host[32],
+  DbConfig_User[32],
+  DbConfig_Password[64],
+  DbConfig_Database[64],
+};
 
-enum EAccessFlagsConfig {
+enum AccessFlagsConfig_Struct {
   AccessFlags_Immunity,
   AccessFlags_Ban,
   AccessFlags_BanOthers,
-  AccessFlags_UnBan_Self,
-  AccessFlags_UnBan_Others
-}
+  AccessFlags_Unban_Self,
+  AccessFlags_Unban_Others
+};
 
-enum ESettingsConfig {
+enum SettingsConfig_Struct {
   bool: Settings_KickAfterBan,
   Float: Settings_KickAfterBan_Time
 };
 
-new DatabaseConfig[EDatabaseConfig];
-new AccessFlagsConfig[EAccessFlagsConfig];
-new SettingsConfig[ESettingsConfig];
+new DatabaseConfig[DatabaseConfig_Struct];
+new AccessFlagsConfig[AccessFlagsConfig_Struct];
+new SettingsConfig[SettingsConfig_Struct];
 
 new Handle: DbHandle = Empty_Handle;
 
@@ -94,17 +94,17 @@ ReadMainConfig() {
     set_fail_state("JSON config must contain a valid object (%s).", configFile);
   }
 
-  json_object_get_string(config, "database.type", DatabaseConfig[DbType], charsmax(DatabaseConfig[DbType]), .dot_not = true);
-  json_object_get_string(config, "database.host", DatabaseConfig[DbHost], charsmax(DatabaseConfig[DbHost]), .dot_not = true);
-  json_object_get_string(config, "database.user", DatabaseConfig[DbUser], charsmax(DatabaseConfig[DbUser]), .dot_not = true);
-  json_object_get_string(config, "database.password", DatabaseConfig[DbPassword], charsmax(DatabaseConfig[DbPassword]), .dot_not = true);
-  json_object_get_string(config, "database.database", DatabaseConfig[DbDatabase], charsmax(DatabaseConfig[DbDatabase]), .dot_not = true);
+  json_object_get_string(config, "database.type", DatabaseConfig[DbConfig_Type], charsmax(DatabaseConfig[DbConfig_Type]), .dot_not = true);
+  json_object_get_string(config, "database.host", DatabaseConfig[DbConfig_Host], charsmax(DatabaseConfig[DbConfig_Host]), .dot_not = true);
+  json_object_get_string(config, "database.user", DatabaseConfig[DbConfig_User], charsmax(DatabaseConfig[DbConfig_User]), .dot_not = true);
+  json_object_get_string(config, "database.password", DatabaseConfig[DbConfig_Password], charsmax(DatabaseConfig[DbConfig_Password]), .dot_not = true);
+  json_object_get_string(config, "database.database", DatabaseConfig[DbConfig_Database], charsmax(DatabaseConfig[DbConfig_Database]), .dot_not = true);
 
   AccessFlagsConfig[AccessFlags_Immunity] = LoadAccessFlags(config, "access_flags.immunity");
   AccessFlagsConfig[AccessFlags_Ban] = LoadAccessFlags(config, "access_flags.ban");
   AccessFlagsConfig[AccessFlags_BanOthers] = LoadAccessFlags(config, "access_flags.ban_others");
-  AccessFlagsConfig[AccessFlags_UnBan_Self] = LoadAccessFlags(config, "access_flags.unban_self");
-  AccessFlagsConfig[AccessFlags_UnBan_Others] = LoadAccessFlags(config, "access_flags.unban_others");
+  AccessFlagsConfig[AccessFlags_Unban_Self] = LoadAccessFlags(config, "access_flags.unban_self");
+  AccessFlagsConfig[AccessFlags_Unban_Others] = LoadAccessFlags(config, "access_flags.unban_others");
 
   SettingsConfig[Settings_KickAfterBan] = json_object_get_bool(config, "settings.kick_after_ban", .dot_not = true);
   SettingsConfig[Settings_KickAfterBan_Time] = json_object_get_real(config, "settings.kick_after_ban_time", .dot_not = true);
@@ -113,12 +113,12 @@ ReadMainConfig() {
 }
 
 ConnectionTest() {
-  SQL_SetAffinity(DatabaseConfig[DbType]);
+  SQL_SetAffinity(DatabaseConfig[DbConfig_Type]);
   DbHandle = SQL_MakeDbTuple(
-    DatabaseConfig[DbHost],
-    DatabaseConfig[DbUser],
-    DatabaseConfig[DbPassword],
-    DatabaseConfig[DbDatabase]
+    DatabaseConfig[DbConfig_Host],
+    DatabaseConfig[DbConfig_User],
+    DatabaseConfig[DbConfig_Password],
+    DatabaseConfig[DbConfig_Database]
   );
 
   SQL_SetCharset(DbHandle, "utf8");

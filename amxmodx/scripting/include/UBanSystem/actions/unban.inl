@@ -6,7 +6,7 @@ enum _: UnbanActionData_Struct {
   Data_PlayerSteamId[MAX_AUTHID_LENGTH]
 }
 
-UnBanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny = false) { 
+UnbanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny = false) { 
   new steamId[MAX_AUTHID_LENGTH];
   get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH - 1);
 
@@ -30,10 +30,10 @@ UnBanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny =
   data[Data_AdminUserId] = get_user_userid(player_id);
   copy(data[Data_PlayerSteamId], MAX_AUTHID_LENGTH - 1, unbanUserSteamId);
 
-  SQL_ThreadQuery(DbHandle, "@UnBanActionHandler", dbQuery, data, sizeof data);
+  SQL_ThreadQuery(DbHandle, "@UnbanActionHandler", dbQuery, data, sizeof data);
 }
 
-@UnBanActionHandler(const failstate, const Handle: query, const error[], const errnum, const data[UnbanActionData_Struct], const size, const Float: queuetime) {
+@UnbanActionHandler(const failstate, const Handle: query, const error[], const errnum, const data[UnbanActionData_Struct], const size, const Float: queuetime) {
   if (failstate != TQUERY_SUCCESS) {
     SQL_ThreadError(query, error, errnum, queuetime);
     return;
@@ -59,10 +59,10 @@ UnBanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny =
   add(dbQuery, charsmax(dbQuery), fmt("WHERE names_history.user_id = users.id "));
   add(dbQuery, charsmax(dbQuery), fmt("ORDER BY names_history.updated_at DESC LIMIT 1;"));
 
-  SQL_ThreadQuery(DbHandle, "@UnBanActionInfoHandler", dbQuery, data, sizeof data);
+  SQL_ThreadQuery(DbHandle, "@UnbanActionInfoHandler", dbQuery, data, sizeof data);
 }
 
-@UnBanActionInfoHandler(const failstate, const Handle: query, const error[], const errnum, const data[UnbanActionData_Struct], const size, const Float: queuetime) {
+@UnbanActionInfoHandler(const failstate, const Handle: query, const error[], const errnum, const data[UnbanActionData_Struct], const size, const Float: queuetime) {
   if (failstate != TQUERY_SUCCESS) {
     SQL_ThreadError(query, error, errnum, queuetime);
     return;
