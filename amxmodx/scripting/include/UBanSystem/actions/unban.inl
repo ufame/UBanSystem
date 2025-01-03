@@ -6,15 +6,12 @@ enum _: UnbanActionData_Struct {
   Data_PlayerSteamId[MAX_AUTHID_LENGTH]
 }
 
-UnbanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny = false) { 
-  new steamId[MAX_AUTHID_LENGTH];
-  get_user_authid(player_id, steamId, MAX_AUTHID_LENGTH - 1);
-
+UnbanAction(const player_id, const adminSteamId[], const targetSteamId[], const bool: canUnbanAny = false) { 
   new dbQuery[512];
 
   add(dbQuery, charsmax(dbQuery), "UPDATE bans ");
-  add(dbQuery, charsmax(dbQuery), fmt("JOIN users AS target_user ON target_user.steam = '%s' ", unbanUserSteamId));
-  add(dbQuery, charsmax(dbQuery), fmt("JOIN users AS admin_user ON admin_user.steam = '%s' ", steamId));
+  add(dbQuery, charsmax(dbQuery), fmt("JOIN users AS target_user ON target_user.steam = '%s' ", targetSteamId));
+  add(dbQuery, charsmax(dbQuery), fmt("JOIN users AS admin_user ON admin_user.steam = '%s' ", adminSteamId));
   add(dbQuery, charsmax(dbQuery), "SET bans.unban_timestamp = CURRENT_TIMESTAMP, ");
   add(dbQuery, charsmax(dbQuery), "bans.unbanned_by_user_id = admin_user.id ");
   add(dbQuery, charsmax(dbQuery), "WHERE bans.user_id = target_user.id ");
@@ -28,7 +25,7 @@ UnbanAction(const player_id, const unbanUserSteamId[], const bool: canUnbanAny =
 
   new data[UnbanActionData_Struct];
   data[Data_AdminUserId] = get_user_userid(player_id);
-  copy(data[Data_PlayerSteamId], MAX_AUTHID_LENGTH - 1, unbanUserSteamId);
+  copy(data[Data_PlayerSteamId], MAX_AUTHID_LENGTH - 1, targetSteamId);
 
   SQL_ThreadQuery(DbHandle, "@UnbanActionHandler", dbQuery, data, sizeof data);
 }

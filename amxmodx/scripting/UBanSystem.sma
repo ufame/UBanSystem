@@ -59,8 +59,8 @@ public plugin_init() {
 
   RegisterHookChain(RG_CBasePlayer_SetClientUserInfoName, "@CBasePlayer_SetClientUserInfoName", .post = 1);
 
-  register_concmd("amx_ban", "@BanCommand");
-  register_concmd("amx_unban", "@UnbanCommand");
+  register_concmd("ubs_ban", "@BanCommand");
+  register_concmd("ubs_unban", "@UnbanCommand");
 }
 
 public client_authorized(player_id, const authid[]) {

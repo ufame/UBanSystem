@@ -8,8 +8,11 @@
     return;
   }
 
-  new steamId[MAX_AUTHID_LENGTH];
-  read_argv(1, steamId, MAX_AUTHID_LENGTH - 1);
+  new targetSteamId[MAX_AUTHID_LENGTH];
+  read_argv(1, targetSteamId, MAX_AUTHID_LENGTH - 1);
 
-  UnbanAction(player_id, steamId, CheckUserAccess(player_id, AccessFlags_Unban_Others));
+  new adminSteamId[MAX_AUTHID_LENGTH];
+  get_user_authid(player_id, adminSteamId, MAX_AUTHID_LENGTH - 1);
+
+  UnbanAction(player_id, adminSteamId, targetSteamId, CheckUserAccess(player_id, AccessFlags_Unban_Others));
 }
